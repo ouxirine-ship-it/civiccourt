@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CivicCourt — Showcase Desain</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f0a1a;--bg-card:rgba(255,255,255,.04);
+  --gold:#d4a843;--gold-light:#f0d68a;--gold-dark:#a07830;
+  --wood:#2a1a0e;--wood-mid:#4a2f1a;
+  --parchment:#f5e6c8;--teal:#2a7a6a;
+  --text:#f5e6c8;--text-dim:rgba(245,230,200,.5);
+  --border:rgba(212,168,67,.2);--radius:16px;
+}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 20% 0%,rgba(212,168,67,.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 100%,rgba(42,122,106,.05) 0%,transparent 50%);pointer-events:none;z-index:0}
+h1,h2,h3,h4{font-family:'Cinzel',serif}
+
+/* HERO HEADER */
+.hero{text-align:center;padding:70px 40px 50px;position:relative;z-index:1}
+.hero-icon{font-size:4rem;display:block;margin-bottom:12px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.hero h1{font-size:3.2rem;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--gold-light),#fff5d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+.hero p{font-size:1.15rem;color:var(--gold-light);font-weight:600;margin-bottom:6px}
+.hero .sub{font-size:.95rem;color:var(--text-dim);max-width:600px;margin:0 auto;line-height:1.7}
+.gold-line{width:200px;height:3px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px auto;border-radius:2px}
+
+/* STATS BAR */
+.stats-bar{display:flex;justify-content:center;gap:50px;padding:20px 40px 40px;position:relative;z-index:1}
+.stat{text-align:center}
+.stat-num{font-family:'Cinzel',serif;font-size:2.4rem;font-weight:900;color:var(--gold-light)}
+.stat-label{font-size:.82rem;color:var(--text-dim);margin-top:2px}
+
+/* GRID */
+.showcase-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:32px;max-width:1200px;margin:0 auto;padding:0 40px 60px;position:relative;z-index:1}
+
+/* CARD */
+.showcase-card{background:var(--bg-card);border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all .4s cubic-bezier(.34,1.56,.64,1);cursor:pointer;position:relative}
+.showcase-card:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:0 12px 40px rgba(212,168,67,.15),0 0 0 1px rgba(212,168,67,.1)}
+.showcase-card::after{content:'🔍 Klik untuk melihat';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(15,10,26,.7);backdrop-filter:blur(4px);color:var(--gold-light);font-family:'Cinzel',serif;font-size:1rem;font-weight:700;letter-spacing:1px;opacity:0;transition:opacity .3s ease;z-index:10;pointer-events:none}
+.showcase-card:hover::after{opacity:1}
+
+/* CARD HEADER (browser chrome) */
+.card-chrome{display:flex;align-items:center;gap:10px;padding:12px 18px;background:linear-gradient(135deg,var(--wood-mid),var(--wood));border-bottom:2px solid var(--border)}
+.chrome-dots{display:flex;gap:6px}
+.chrome-dots span{width:10px;height:10px;border-radius:50%;border:1px solid rgba(255,255,255,.1)}
+.chrome-dots span:nth-child(1){background:#e74c3c}
+.chrome-dots span:nth-child(2){background:#f1c40f}
+.chrome-dots span:nth-child(3){background:#2ecc71}
+.card-title{flex:1;display:flex;align-items:center;gap:8px}
+.page-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:rgba(212,168,67,.15);border:1px solid var(--gold-dark);font-family:'Cinzel',serif;font-size:.72rem;font-weight:700;color:var(--gold-light)}
+.card-title h3{font-size:.85rem;color:var(--gold-light);font-weight:600;letter-spacing:.5px}
+
+/* IFRAME CONTAINER */
+.iframe-wrap{position:relative;width:100%;padding-bottom:56.25%;overflow:hidden;background:var(--wood)}
+.iframe-wrap iframe{position:absolute;top:0;left:0;width:1536px;height:864px;border:none;transform-origin:0 0;pointer-events:none}
+
+/* LIGHTBOX */
+.lightbox{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:30px;flex-direction:column;gap:16px}
+.lightbox.show{display:flex;animation:fadeIn .3s ease}
+@keyframes fadeIn{0%{opacity:0}100%{opacity:1}}
+.lb-header{display:flex;align-items:center;gap:16px;width:100%;max-width:1300px}
+.lb-title{flex:1;font-family:'Cinzel',serif;font-size:1.2rem;color:var(--gold-light);display:flex;align-items:center;gap:10px}
+.lb-close{width:40px;height:40px;border-radius:50%;border:2px solid var(--gold-dark);background:rgba(212,168,67,.1);color:var(--gold-light);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s ease}
+.lb-close:hover{background:#c0392b;border-color:#c0392b;color:#fff;transform:rotate(90deg)}
+.lb-frame{width:100%;max-width:1300px;flex:1;border-radius:var(--radius);overflow:hidden;border:3px solid var(--gold-dark);box-shadow:0 20px 60px rgba(0,0,0,.5);position:relative;background:var(--wood)}
+.lb-frame iframe{width:100%;height:100%;border:none}
+.lb-nav{display:flex;gap:12px;align-items:center}
+.lb-btn{padding:10px 22px;border-radius:10px;font-family:'Cinzel',serif;font-size:.85rem;font-weight:700;border:2px solid var(--gold-dark);cursor:pointer;transition:all .3s ease;display:flex;align-items:center;gap:8px}
+.lb-btn-prev{background:linear-gradient(135deg,var(--wood-mid),#6b4226);color:var(--gold-light)}
+.lb-btn-next{background:linear-gradient(135deg,var(--teal),#3daa94);color:#fff}
+.lb-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,.3)}
+.lb-counter{font-size:.9rem;color:var(--text-dim);font-weight:600;min-width:60px;text-align:center}
+
+/* FOOTER */
+.showcase-footer{text-align:center;padding:40px;border-top:2px solid var(--border);margin-top:20px;position:relative;z-index:1}
+.showcase-footer p{font-size:.85rem;color:var(--text-dim)}
+.showcase-footer .brand{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold);margin-bottom:6px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .showcase-grid{grid-template-columns:1fr;padding:0 20px 40px}
+  .hero h1{font-size:2.2rem}
+  .stats-bar{gap:30px}
+  .hero{padding:50px 20px 30px}
+}
+@media(max-width:480px){
+  .stats-bar{flex-wrap:wrap;gap:20px}
+  .stat-num{font-size:1.8rem}
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <span class="hero-icon">⚖️</span>
+  <h1>CivicCourt</h1>
+  <div class="gold-line"></div>
+  <p>Design Showcase — Semua Halaman</p>
+  <p class="sub">Berikut adalah tampilan lengkap seluruh halaman desain CivicCourt. Klik pada setiap preview untuk melihat halaman dalam ukuran penuh.</p>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">8</div><div class="stat-label">Halaman</div></div>
+  <div class="stat"><div class="stat-num">6</div><div class="stat-label">Kartu Peran</div></div>
+  <div class="stat"><div class="stat-num">3</div><div class="stat-label">Studi Kasus</div></div>
+  <div class="stat"><div class="stat-num">5</div><div class="stat-label">Langkah Argumen</div></div>
+</div>
+
+<!-- SHOWCASE GRID -->
+<div class="showcase-grid" id="showcase-grid">
+
+  <div class="showcase-card" data-section="beranda" data-label="Beranda">
+    <div class="card-chrome"><div class="chrome-dots"><span></span><span></span><span></span></div><div class="card-title"><span class="page-num">1</span><h3>Beranda</h3></div></div>
+    <div class="iframe-wrap"><iframe src="index.html?embed=1#beranda" loading="lazy" tabindex="-1"></iframe></div>
+  </div>
+
+  <div class="showcase-card" data-section="pilih-kasus" data-label="Pilih Kasus">
+    <div class="card-chrome"><div class="chrome-dots"><span></span><span></span><span></span></div><div class="card-title"><span class="page-num">2</span><h3>Pilih Kasus Sidang</h3></div></div>
+    <div class="iframe-wrap"><iframe src="index.html?embed=1#pilih-kasus" loading="lazy" tabindex="-1"></iframe></div>
+  </div>
+
+  <div class="showcase-card" data-section="peta-isu" data-label="Peta Isu">
+    <div class="card-chrome"><div class="chrome-dots"><span></span><span></span><span></span></div><div class="card-title"><span class="page-num">3</span><h3>Peta Isu dan Persoalan</h3></div></div>
+    <div class="iframe-wrap"><iframe src="index.html?embed=1#peta-isu" loading="lazy" tabindex="-1"></iframe></div>
+  </div>
+
+  <div class="showcase-card" data-section="bukti" data-label="Bukti">
+    <div class="card-chrome"><div class="chrome-dots"><span></span><span></span><span></span></div><div class="card-title"><span class="page-num">4</span><h3>Bukti dan Dasar Pertimbangan</h3></div></div>
+    <div class="iframe-wrap"><iframe src="index.html?embed=1#bukti" loading="lazy" tabindex="-1"></iframe></div>
+  </div>
+
+  <div class="showcase-card" data-section="kartu-peran" data-label="Kartu Peran">
+    <div class="card-chrome"><div class="chrome-dots"><span></span><span></span><span></span></div><div class="card-title"><span class="page-num">5</span><h3>Kartu Peran Sidang</h3></div></div>
+    <div class="iframe-wrap"><iframe src="index.html?embed=1#kartu-peran" loading="lazy" tabindex="-1"></iframe></div>
+  </div>
+
+  <div class="showcase-card" data-section="ruang-argumen" data-label="Ruang Argumen">
+    <div class="card-chrome"><div class="chrome-dots"><span></span><span></span><span></span></div><div class="card-title"><span class="page-num">6</span><h3>Ruang Argumen</h3></div></div>
+    <div class="iframe-wrap"><iframe src="index.html?embed=1#ruang-argumen" loading="lazy" tabindex="-1"></iframe></div>
+  </div>
+
+  <div class="showcase-card" data-section="lembar-putusan" data-label="Lembar Putusan">
+    <div class="card-chrome"><div class="chrome-dots"><span></span><span></span><span></span></div><div class="card-title"><span class="page-num">7</span><h3>Lembar Putusan</h3></div></div>
+    <div class="iframe-wrap"><iframe src="index.html?embed=1#lembar-putusan" loading="lazy" tabindex="-1"></iframe></div>
+  </div>
+
+  <div class="showcase-card" data-section="refleksi" data-label="Refleksi">
+    <div class="card-chrome"><div class="chrome-dots"><span></span><span></span><span></span></div><div class="card-title"><span class="page-num">8</span><h3>Refleksi dan Umpan Balik</h3></div></div>
+    <div class="iframe-wrap"><iframe src="index.html?embed=1#refleksi" loading="lazy" tabindex="-1"></iframe></div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="showcase-footer">
+  <p class="brand">⚖️ CivicCourt v1.0</p>
+  <p>Media Pembelajaran PPKn Berbasis Simulasi Sidang</p>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <div class="lb-header">
+    <div class="lb-title"><span id="lb-icon">⚖️</span> <span id="lb-name">Beranda</span></div>
+    <div class="lb-nav">
+      <button class="lb-btn lb-btn-prev" id="lb-prev">← Sebelumnya</button>
+      <span class="lb-counter" id="lb-counter">1 / 8</span>
+      <button class="lb-btn lb-btn-next" id="lb-next">Selanjutnya →</button>
+    </div>
+    <button class="lb-close" id="lb-close">✕</button>
+  </div>
+  <div class="lb-frame">
+    <iframe id="lb-iframe" src="about:blank"></iframe>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Scale iframes to fit containers
+  function scaleIframes() {
+    document.querySelectorAll('.iframe-wrap').forEach(wrap => {
+      const w = wrap.offsetWidth;
+      const scale = w / 1536;
+      const iframe = wrap.querySelector('iframe');
+      if (iframe) iframe.style.transform = `scale(${scale})`;
+    });
+  }
+  scaleIframes();
+  window.addEventListener('resize', scaleIframes);
+
+  // Page data
+  const pages = [
+    { section: 'beranda', label: 'Beranda', icon: '🏠' },
+    { section: 'pilih-kasus', label: 'Pilih Kasus Sidang', icon: '📂' },
+    { section: 'peta-isu', label: 'Peta Isu dan Persoalan', icon: '🗺️' },
+    { section: 'bukti', label: 'Bukti dan Dasar Pertimbangan', icon: '📑' },
+    { section: 'kartu-peran', label: 'Kartu Peran Sidang', icon: '🎭' },
+    { section: 'ruang-argumen', label: 'Ruang Argumen', icon: '💬' },
+    { section: 'lembar-putusan', label: 'Lembar Putusan', icon: '📜' },
+    { section: 'refleksi', label: 'Refleksi dan Umpan Balik', icon: '🪞' }
+  ];
+
+  // Lightbox
+  const lightbox = document.getElementById('lightbox');
+  const lbIframe = document.getElementById('lb-iframe');
+  const lbName = document.getElementById('lb-name');
+  const lbIcon = document.getElementById('lb-icon');
+  const lbCounter = document.getElementById('lb-counter');
+  let currentLb = 0;
+
+  function openLightbox(idx) {
+    currentLb = idx;
+    const page = pages[idx];
+    lbIframe.src = `index.html?embed=1#${page.section}`;
+    lbName.textContent = page.label;
+    lbIcon.textContent = page.icon;
+    lbCounter.textContent = `${idx + 1} / ${pages.length}`;
+    lightbox.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('show');
+    lbIframe.src = 'about:blank';
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('lb-close').addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', e => { if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', e => {
+    if (!lightbox.classList.contains('show')) return;
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowRight' && currentLb < pages.length - 1) openLightbox(currentLb + 1);
+    if (e.key === 'ArrowLeft' && currentLb > 0) openLightbox(currentLb - 1);
+  });
+
+  document.getElementById('lb-prev').addEventListener('click', () => {
+    if (currentLb > 0) openLightbox(currentLb - 1);
+  });
+  document.getElementById('lb-next').addEventListener('click', () => {
+    if (currentLb < pages.length - 1) openLightbox(currentLb + 1);
+  });
+
+  // Card click → open lightbox
+  document.querySelectorAll('.showcase-card').forEach((card, i) => {
+    card.addEventListener('click', () => openLightbox(i));
+  });
+
+  // Animate cards on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.showcase-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(30px)';
+    card.style.transition = 'opacity .6s ease, transform .6s ease';
+    observer.observe(card);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+Baik! Sudah jelas alurnya. Berikut prompt lengkap untuk pembuatan website ini:
+
+---
+
+## 🧾 PROMPT PEMBUATAN WEBSITE SIMULASI PERADILAN SEMU (PPKn)
+
+---
+
+### 📌 DESKRIPSI PROYEK
+Buat sebuah **website interaktif simulasi peradilan semu** untuk mata pelajaran PPKn. Website ini berbasis **HTML, CSS, dan JavaScript** (single file atau multi-page), dengan tema visual **ruang pengadilan klasik bergaya game/RPG** (warna coklat tua, biru navy, emas). Semua desain visual sudah tersedia, fokus pada **struktur navigasi dan alur halaman**.
+
+---
+
+### 🗺️ ALUR HALAMAN (SITEMAP)
+
+```
+HOME
+└── DASHBOARD UTAMA PERMAINAN
+    ├── KASUS 1 → Halaman Menu Kasus 1
+    │   ├── Materi
+    │   ├── Berkas Kasus
+    │   ├── Kartu Peran
+    │   ├── Bukti Sidang
+    │   ├── Dasar Hukum
+    │   ├── Alur dan Peraturan
+    │   ├── Lembar Putusan
+    │   └── Refleksi
+    ├── KASUS 2 → Halaman Menu Kasus 2
+    │   └── (8 menu yang sama, konten berbeda)
+    └── KASUS 3 → Halaman Menu Kasus 3
+        └── (8 menu yang sama, konten berbeda)
+```
+
+---
+
+### 📄 DETAIL SETIAP HALAMAN
+
+**1. Halaman HOME**
+- Tampilan intro/landing website
+- Tombol masuk ke Dashboard Utama
+- Navigasi: tombol HOME di semua halaman
+
+---
+
+**2. Halaman DASHBOARD UTAMA PERMAINAN**
+- Judul: "Dashboard Utama Permainan"
+- Panel informasi berisi:
+  - Mata Pelajaran: PPKn
+  - Mode: Simulasi Sidang
+  - Durasi: 30–40 menit
+  - Tujuan: Menguji pemahaman HAM, negara hukum, dan tanggung jawab warga negara
+- Tiga tombol navigasi di bagian bawah: **KASUS 1**, **KASUS 2**, **KASUS 3**
+- Navigasi: tombol KEMBALI → HOME, tombol HOME
+
+---
+
+**3. Halaman MENU KASUS (berlaku untuk Kasus 1, 2, dan 3)**
+- Judul halaman = nama kasus (contoh Kasus 1: *"Ujaran Kebencian di Sosial Media"*)
+- Grid 4x2 berisi 8 tombol menu:
+
+| No | Menu | Fungsi |
+|----|------|--------|
+| 1 | Materi | Halaman berisi materi pembelajaran |
+| 2 | Berkas Kasus | Dokumen/deskripsi kasus hukum |
+| 3 | Kartu Peran | Pembagian peran (hakim, jaksa, pengacara, dll) |
+| 4 | Bukti Sidang | Daftar barang bukti |
+| 5 | Dasar Hukum | Pasal dan UU yang relevan |
+| 6 | Alur dan Peraturan | Tata cara simulasi sidang |
+| 7 | Lembar Putusan | Form/template putusan hakim |
+| 8 | Refleksi | Pertanyaan refleksi setelah simulasi |
+
+- Navigasi: tombol ← (kembali ke Dashboard), HOME, → (ke kasus berikutnya)
+
+---
+
+**4. Halaman Sub-Menu (contoh: Materi, Berkas Kasus, dst)**
+- Setiap tombol menu membuka halaman konten tersendiri
+- Konten berbeda untuk setiap kasus
+- Navigasi: tombol KEMBALI ke halaman Menu Kasus, tombol HOME
+
+---
+
+### ⚙️ FITUR TEKNIS YANG DIBUTUHKAN
+
+```
+- Navigasi antar halaman (SPA atau multi-page)
+- Tombol KEMBALI dan HOME berfungsi di semua halaman
+- Tombol navigasi ← → antar kasus (Kasus 1 → 2 → 3)
+- Struktur konten mudah diedit per kasus
+- Responsif (bisa dibuka di laptop/tablet)
+```
+
+---
+
+### 🗂️ STRUKTUR FILE YANG DISARANKAN
+
+```
+/index.html              ← HOME
+/dashboard.html          ← Dashboard Utama
+/kasus1/index.html       ← Menu Kasus 1
+/kasus1/materi.html
+/kasus1/berkas-kasus.html
+/kasus1/kartu-peran.html
+/kasus1/bukti-sidang.html
+/kasus1/dasar-hukum.html
+/kasus1/alur-peraturan.html
+/kasus1/lembar-putusan.html
+/kasus1/refleksi.html
+/kasus2/...              ← (struktur sama)
+/kasus3/...              ← (struktur sama)
+/assets/css/style.css
+/assets/js/main.js
+```
+
+---

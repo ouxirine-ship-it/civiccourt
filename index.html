@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CivicCourt — Media Pembelajaran PPKn Berbasis Simulasi Sidang.">
+  <title>CivicCourt — Peradilan Semu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="particles"></div>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
+  <div class="nav-brand"><span class="gavel">⚖️</span> CivicCourt</div>
+  <div class="topbar-spacer"></div>
+  <div class="audio-control">
+    <button class="audio-btn" id="audio-toggle" title="Backsound">🔊</button>
+  </div>
+</header>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="nav-brand"><span class="gavel">⚖️</span> CivicCourt</div>
+    <button class="sidebar-close" id="sidebar-close">✕</button>
+  </div>
+  <div class="sidebar-links" id="sidebar-links"></div>
+  <div class="sidebar-footer">
+    <p>⚖️ CivicCourt v1.0</p>
+    <p class="sidebar-footer-sub">Media Pembelajaran PPKn</p>
+  </div>
+</aside>
+
+<div class="progress-wrapper"><div class="progress-bar"></div></div>
+
+<main class="main-content">
+
+  <!-- 1. BERANDA -->
+  <section class="section active" id="beranda">
+    <div class="hero">
+      <div class="hero-content">
+        <h1>⚖️ CivicCourt</h1>
+        <p class="tagline">Media Pembelajaran PPKn Berbasis Simulasi Sidang</p>
+        <p class="hero-text">Selamat datang di CivicCourt. Media ini dirancang untuk membantu kamu memahami persoalan kewargaan melalui simulasi sidang yang tertib, terarah, dan berbasis bukti.<br><br>Di dalam CivicCourt, kamu akan mempelajari kasus, menelaah bukti, menjalankan peran, menyusun argumen, menyampaikan sanggahan, lalu merumuskan putusan secara bertanggung jawab.</p>
+        <div class="hero-buttons">
+          <button class="btn-3d btn-teal" data-nav="dashboard">▶ Mulai</button>
+          <button class="btn-3d btn-navy" data-nav="dashboard">📖 Panduan</button>
+        </div>
+      </div>
+      <div class="hero-image"><img src="assets/hero-scene.png" alt="CivicCourt Scene"></div>
+      <div class="hero-footer">✨ Belajar PPKn menjadi lebih hidup melalui kasus, bukti, argumen, dan putusan.</div>
+    </div>
+  </section>
+
+  <!-- 2. DASHBOARD -->
+  <section class="section" id="dashboard">
+    <div class="section-header">
+      <div class="section-icon">📊</div>
+      <h2 class="section-title">Dashboard Utama Permainan</h2>
+      <div class="banner-divider"></div>
+      <p class="section-subtitle">Pilih kasus dan mulai simulasi sidang bersama kelompokmu.</p>
+    </div>
+    <div class="dashboard-info">
+      <div class="info-card"><span class="info-icon">📚</span><span class="info-label">Mata Pelajaran</span><span class="info-value">PPKn</span></div>
+      <div class="info-card"><span class="info-icon">⚖️</span><span class="info-label">Mode</span><span class="info-value">Simulasi Sidang</span></div>
+      <div class="info-card"><span class="info-icon">⏱️</span><span class="info-label">Durasi</span><span class="info-value">30–40 menit</span></div>
+      <div class="info-card"><span class="info-icon">🎯</span><span class="info-label">Tujuan</span><span class="info-value">Menguji pemahaman HAM, negara hukum, dan tanggung jawab warga negara</span></div>
+    </div>
+    <h3 class="cases-heading">📂 Pilih Kasus</h3>
+    <div class="cases-grid">
+      <div class="case-card"><div class="case-card-header"><span class="case-number">KASUS 1</span><span class="case-icon">📱</span></div><div class="case-card-body"><h3>Ujaran Kebencian di Media Sosial</h3><p>Penggunaan media sosial yang mengandung penghinaan, hasutan, atau kebencian terhadap pihak tertentu.</p><button class="btn-3d btn-navy btn-sm" data-nav="menu-kasus-1">📖 Pilih Kasus</button></div></div>
+      <div class="case-card"><div class="case-card-header"><span class="case-number">KASUS 2</span><span class="case-icon">💰</span></div><div class="case-card-body"><h3>Penyalahgunaan Dana Kegiatan Sekolah</h3><p>Penggunaan dana kegiatan yang tidak sesuai dengan tujuan atau aturan yang berlaku.</p><button class="btn-3d btn-wood btn-sm" data-nav="menu-kasus-2">📖 Pilih Kasus</button></div></div>
+      <div class="case-card"><div class="case-card-header"><span class="case-number">KASUS 3</span><span class="case-icon">📢</span></div><div class="case-card-body"><h3>Pelanggaran Hak Menyampaikan Aspirasi</h3><p>Situasi ketika hak menyampaikan pendapat dibatasi atau tidak dihormati dengan baik.</p><button class="btn-3d btn-teal btn-sm" data-nav="menu-kasus-3">📖 Pilih Kasus</button></div></div>
+    </div>
+    <div class="section-nav">
+      <button class="nav-home-btn" data-nav="beranda" title="Beranda">🏠</button>
+    </div>
+  </section>
+
+  <!-- 3. MENU KASUS (template — JS sets content) -->
+  <section class="section" id="menu-kasus-1"></section>
+  <section class="section" id="menu-kasus-2"></section>
+  <section class="section" id="menu-kasus-3"></section>
+
+  <!-- 4. SUB-MENU PAGE (single template — JS populates) -->
+  <section class="section" id="sub-page"></section>
+
+</main>
+
+<!-- ROLE MODAL -->
+<div class="modal-overlay" id="role-modal">
+  <div class="modal-content">
+    <button class="modal-close">✕</button>
+    <img src="" alt="Role Character">
+    <h3></h3>
+    <p></p>
+  </div>
+</div>
+
+<audio id="bg-music" src="Stock-Waves - Peaceful Corporate No Copyright Background Music.mp3" loop preload="auto"></audio>
+<script src="content-kasus1.js"></script>
+<script src="content-kasus2.js"></script>
+<script src="content-kasus3.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
