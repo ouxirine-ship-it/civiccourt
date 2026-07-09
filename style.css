@@ -302,5 +302,55 @@ h1,h2,h3,h4,h5{font-family:'MedievalSharp','Cinzel',serif;letter-spacing:1px}
 .quiz-score-fill{height:100%;background:linear-gradient(90deg,#27ae60,#2ecc71,#f1c40f);border-radius:7px;width:0;transition:width 1s cubic-bezier(.34,1.56,.64,1)}
 .quiz-score-msg{font-size:1.15rem;color:var(--parchment);font-weight:600;margin-top:6px}
 
+/* QUIZ INTRO & OUTRO CARDS (dark bg overrides) */
+.quiz-qslide .content-card{
+  background:linear-gradient(135deg,rgba(74,47,26,.8),rgba(42,26,14,.9))!important;
+  color:#fcf4d9!important;
+}
+.quiz-qslide .content-card h3,.quiz-qslide .content-card h4{
+  color:var(--gold-light)!important;
+}
+.quiz-qslide .content-card p,
+.quiz-qslide .content-card li,
+.quiz-qslide .content-card ul,
+.quiz-qslide .content-card ol{
+  color:#fcf4d9!important;
+  font-size:0.92rem;
+  line-height:1.65;
+}
+
+/* STANDALONE BTN-GOLD (when used outside btn-3d) */
+.btn-gold{
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  color:var(--wood-dark);
+  padding:16px 40px;
+  border-radius:30px;
+  font-family:'MedievalSharp','Cinzel',serif;
+  font-size:1.1rem;
+  font-weight:800;
+  border:2px solid var(--gold-dark);
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,.3),0 2px 0 rgba(0,0,0,.15);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  text-shadow:0 1px 2px rgba(0,0,0,0.3);
+  letter-spacing:0.5px;
+  display:inline-block;
+}
+.btn-gold:hover{
+  transform:translateY(-3px) scale(1.03);
+  box-shadow:0 8px 20px rgba(0,0,0,.4),0 3px 0 rgba(0,0,0,.2);
+  background:linear-gradient(135deg,var(--gold-light),var(--gold));
+}
+.btn-gold:active{
+  transform:translateY(1px);
+  box-shadow:0 1px 4px rgba(0,0,0,.2);
+}
+
+/* Next question btn in quiz */
+.next-q-btn{
+  padding:12px 28px!important;
+  border-radius:12px!important;
+  font-size:0.95rem!important;
+}
 @media(max-width:768px){.topbar{height:52px;padding:0 12px}.sidebar{width:260px}.hero{grid-template-columns:1fr;text-align:center}.hero-content{align-items:center;text-align:center}.hero-image{max-width:280px}.hero h1{font-size:2rem}.section-title{font-size:1.6rem}.menu-grid{grid-template-columns:repeat(2,1fr)}.roles-grid .role-card{width:calc(50% - 11px);min-width:200px}.cases-grid{grid-template-columns:1fr}.evidence-tabs{flex-direction:column}.progress-wrapper{top:52px}.main-content{padding-top:68px}.dashboard-info{grid-template-columns:1fr 1fr}.bukti-grid{grid-template-columns:repeat(2,1fr)}.inner-tabs{gap:3px}.inner-tab{padding:8px 14px;font-size:.75rem}}
 @media(max-width:480px){.menu-grid{grid-template-columns:1fr 1fr}.roles-grid .role-card{width:100%;min-width:auto}.hero h1{font-size:1.6rem}.hero-image{max-width:220px}.section{padding:18px 14px 36px}.sidebar{width:100%}.dashboard-info{grid-template-columns:1fr}.bukti-grid{grid-template-columns:1fr 1fr}.inner-tab{padding:7px 10px;font-size:.7rem}}
