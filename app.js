@@ -19,6 +19,18 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'close': osc.type='triangle'; osc.frequency.setValueAtTime(600,now); osc.frequency.exponentialRampToValueAtTime(280,now+.15); gain.gain.setValueAtTime(.5,now); gain.gain.exponentialRampToValueAtTime(.001,now+.2); osc.start(now); osc.stop(now+.2); break;
       case 'tab': osc.type='square'; osc.frequency.setValueAtTime(460,now); osc.frequency.exponentialRampToValueAtTime(700,now+.05); gain.gain.setValueAtTime(.35,now); gain.gain.exponentialRampToValueAtTime(.001,now+.1); osc.start(now); osc.stop(now+.1); break;
       case 'modal': osc.type='sine'; osc.frequency.setValueAtTime(320,now); osc.frequency.exponentialRampToValueAtTime(640,now+.12); gain.gain.setValueAtTime(.5,now); gain.gain.exponentialRampToValueAtTime(.001,now+.2); osc.start(now); osc.stop(now+.2); break;
+      case 'correct': {
+        const audioCorrect = new Audio('assets/audio/tepuk_tangan.mp4');
+        audioCorrect.volume = 1.0;
+        audioCorrect.play().catch(e => console.log(e));
+        return;
+      }
+      case 'wrong': {
+        const audioWrong = new Audio('assets/audio/tetot.mp4');
+        audioWrong.volume = 1.0;
+        audioWrong.play().catch(e => console.log(e));
+        return;
+      }
     }
   }
 
@@ -209,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const progressBar = document.querySelector('.progress-bar');
   let currentSection = 'beranda';
   let currentKasus = 1;
+  let activeSubmenuIdx = null;
 
   function navigateTo(id) {
     sections.forEach(s => s.classList.remove('active'));
@@ -277,20 +290,183 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="inner-nav-title"><span id="inner-title">${data.tabs[0].icon||''} ${data.tabs[0].label}</span><span class="inner-nav-counter" id="inner-counter">1 / ${data.tabs.length}</span></div>
       <button class="inner-nav-arrow" id="inner-next" ${data.tabs.length<=1?'disabled':''}>▶</button>
     </div>`;
-    const panelsHTML = data.tabs.map((t,i) => `<div class="inner-panel${i===0?' active':''}" data-ipanel="${i}">${t.html}</div>`).join('');
+    const panelsHTML = data.tabs.map((t,i) => {
+      const content = t.quiz ? generateQuizHTML(t.quiz, t.intro, t.outro) : t.html;
+      return `<div class="inner-panel${i===0?' active':''}" data-ipanel="${i}">${content}</div>`;
+    }).join('');
     return navHTML + panelsHTML;
   }
 
+  function generateQuizHTML(quizArray, intro, outro) {
+    if (!intro || !outro) {
+      // Fallback to simple quiz style if intro/outro are not specified
+      let html = `<div class="quiz-container" id="quiz-container">`;
+      quizArray.forEach((q, qi) => {
+        html += `<div class="quiz-question" data-qi="${qi}">
+          <p class="quiz-q-text"><strong>Soal ${qi+1}.</strong> ${q.question}</p>
+          <div class="quiz-options">`;
+        q.options.forEach((opt, oi) => {
+          const letter = String.fromCharCode(65 + oi);
+          html += `<label class="quiz-option" data-qi="${qi}" data-val="${letter}">
+            <span class="quiz-option-letter">${letter}</span>
+            <span class="quiz-option-text">${opt}</span>
+          </label>`;
+        });
+        html += `</div></div>`;
+      });
+      html += `</div>
+      <div class="quiz-result" id="quiz-result" style="display:none">
+        <div class="quiz-result-inner">
+          <h3>🏆 Hasil Kuis</h3>
+          <div class="quiz-score-display">
+            <div class="quiz-score-correct">✅ Benar: <span id="quiz-correct-count">0</span></div>
+            <div class="quiz-score-wrong">❌ Salah: <span id="quiz-wrong-count">0</span></div>
+            <div class="quiz-score-total">📊 Total: <span id="quiz-total-count">0</span> / ${quizArray.length}</div>
+          </div>
+          <div class="quiz-score-bar"><div class="quiz-score-fill" id="quiz-score-fill"></div></div>
+          <p class="quiz-score-msg" id="quiz-score-msg" style="color:#ffffff !important; font-weight:800; font-size:1.25rem; text-shadow:0 2px 5px rgba(0,0,0,0.8); margin-top:16px;"></p>
+        </div>
+      </div>`;
+      return html;
+    }
+
+    let html = `<div class="quiz-slideshow-container" id="quiz-slideshow-container">`;
+    
+    // Slide 0: Intro Slide
+    html += `
+      <div class="quiz-qslide active" data-qslide="0">
+        <div class="content-card" style="border: 2px solid var(--gold-dark); border-radius: var(--radius-sm); background: linear-gradient(135deg, rgba(74,47,26,.8), rgba(42,26,14,.9)); margin-bottom: 0;">
+          <h3 style="font-family:'MedievalSharp','Cinzel',serif;font-size:1.5rem;color:var(--gold-light);text-align:center;margin-bottom:10px;line-height:1.3;">🏆 ${intro.title}</h3>
+          <p style="text-align:center;font-weight:700;color:var(--gold);margin-bottom:18px;font-size:1rem;line-height:1.3;">${intro.subtitle}</p>
+          <p style="line-height:1.6;font-size:0.95rem;margin-bottom:16px;color:var(--parchment-dark);text-align:justify;">${intro.desc}</p>
+          
+          <div style="background:rgba(212,168,67,0.06);padding:14px;border-radius:8px;border:1px solid rgba(212,168,67,0.18);margin-bottom:16px;">
+            <h4 style="color:var(--gold-light);margin-top:0;margin-bottom:8px;font-family:'MedievalSharp',serif;font-size:0.95rem;">📋 Petunjuk Kuis:</h4>
+            <ul style="margin:0;padding-left:18px;font-size:0.88rem;line-height:1.5;color:var(--parchment-dark);">
+              ${intro.petunjuk.map(p => `<li>${p}</li>`).join('')}
+            </ul>
+          </div>
+
+          <div style="background:rgba(255,255,255,0.03);padding:14px;border-radius:8px;border:1px solid rgba(255,255,255,0.07);margin-bottom:20px;">
+            <h4 style="color:var(--gold-light);margin-top:0;margin-bottom:8px;font-family:'MedievalSharp',serif;font-size:0.95rem;">🛡️ Fokus Kuis:</h4>
+            <ul style="margin:0;padding-left:18px;font-size:0.88rem;line-height:1.5;color:var(--parchment-dark);list-style-type:decimal;">
+              ${intro.fokus.map(f => `<li>${f}</li>`).join('')}
+            </ul>
+          </div>
+          
+          <p style="font-style:italic;font-size:0.85rem;color:var(--gold-light);text-align:center;margin-bottom:20px;">${intro.note}</p>
+          
+          <div style="text-align:center;">
+            <button class="btn-gold" id="start-quiz-btn" style="padding:12px 28px;font-size:1.05rem;font-weight:800;font-family:Cinzel,serif;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Mulai Kuis 🚀</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // Slides 1 to N: Questions
+    quizArray.forEach((q, qi) => {
+      html += `
+        <div class="quiz-qslide" data-qslide="${qi+1}" style="display:none;">
+          <div class="quiz-question" data-qi="${qi}">
+            <p class="quiz-q-text" style="font-size:1.1rem;line-height:1.6;font-weight:700;margin-bottom:20px;"><strong>Soal ${qi+1} dari ${quizArray.length}.</strong><br>${q.question}</p>
+            <div class="quiz-options" style="display:flex;flex-direction:column;gap:12px;margin-bottom:24px;">
+      `;
+      q.options.forEach((opt, oi) => {
+        const letter = String.fromCharCode(65 + oi);
+        html += `
+          <label class="quiz-option" data-qi="${qi}" data-val="${letter}">
+            <span class="quiz-option-letter">${letter}</span>
+            <span class="quiz-option-text">${opt}</span>
+          </label>
+        `;
+      });
+      html += `
+            </div>
+            <div style="text-align:right;min-height:50px;">
+              <button class="btn-gold next-q-btn" id="next-q-btn-${qi}" style="display:none;padding:10px 24px;font-weight:700;font-family:Cinzel,serif;">Lanjut Soal Berikutnya ▶</button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+
+    // Slide N+1: Outro & Results Slide
+    html += `
+      <div class="quiz-qslide" data-qslide="${quizArray.length+1}" style="display:none;">
+        <div class="quiz-result" style="margin-top:0;">
+          <div class="quiz-result-inner" style="border:3px solid var(--gold);border-radius:var(--radius);padding:24px;text-align:center;">
+            <h3>🏆 Hasil Kuis</h3>
+            <div class="quiz-score-display" style="display:flex;justify-content:center;gap:18px;margin-bottom:18px;flex-wrap:wrap;">
+              <div class="quiz-score-correct">✅ Benar: <span id="quiz-correct-count">0</span></div>
+              <div class="quiz-score-wrong">❌ Salah: <span id="quiz-wrong-count">0</span></div>
+              <div class="quiz-score-total">📊 Total: <span id="quiz-total-count">0</span> / ${quizArray.length}</div>
+            </div>
+            <div class="quiz-score-bar" style="width:100%;height:14px;background:rgba(255,255,255,.1);border-radius:7px;overflow:hidden;margin-bottom:16px;">
+              <div class="quiz-score-fill" id="quiz-score-fill" style="height:100%;background:linear-gradient(90deg,#27ae60,#2ecc71,#f1c40f);border-radius:7px;width:0;transition:width 1s cubic-bezier(.34,1.56,.64,1);"></div>
+            </div>
+            <p class="quiz-score-msg" id="quiz-score-msg" style="color:#ffffff !important; font-weight:800; font-size:1.2rem; text-shadow:0 2px 5px rgba(0,0,0,0.8); margin-top:16px; margin-bottom:0;"></p>
+          </div>
+        </div>
+
+        <div class="content-card" style="margin-top:20px;border:2px solid var(--gold-dark);border-radius:var(--radius-sm);background: linear-gradient(135deg, rgba(74,47,26,.8), rgba(42,26,14,.9));">
+          <h3 style="font-family:'MedievalSharp','Cinzel',serif;font-size:1.4rem;color:var(--gold-light);text-align:center;margin-bottom:10px;">🌟 ${outro.title}</h3>
+          <p style="text-align:center;font-weight:700;color:var(--gold);margin-bottom:16px;font-size:0.95rem;">${outro.subtitle}</p>
+          <p style="line-height:1.7;font-size:0.92rem;margin-bottom:16px;text-align:justify;color:var(--parchment-dark);">${outro.desc}</p>
+          <div class="highlight-box" style="margin-top:14px;font-style:italic;text-align:center;font-size:0.9rem;">${outro.moral}</div>
+        </div>
+      </div>
+    `;
+
+    html += `</div>`;
+    return html;
+  }
+
+
+
   function renderEvidence(data) {
     return `<p class="section-subtitle" style="margin-bottom:24px">Klik bukti untuk melihat detail. Gunakan bukti sebagai dasar pendapat dan argumen.</p>
-      <div class="bukti-grid">${data.evidence.map((e,i) => `
+      <div class="bukti-grid">${data.evidence.map((e,i) => {
+        const isVid = e.img && e.img.endsWith('.mp4');
+        const mediaTag = isVid ? `<video class="bukti-card-img" src="${e.img}" muted loop></video>` : `<img class="bukti-card-img" src="${e.img}" alt="Bukti ${e.num}">`;
+        return `
         <div class="bukti-card" data-bukti-idx="${i}">
-          <img class="bukti-card-img" src="${e.img}" alt="Bukti ${e.num}">
+          ${mediaTag}
           <div class="bukti-card-body">
             <span class="bukti-card-num">BUKTI ${e.num}</span>
             <div class="bukti-card-title">${e.title}</div>
           </div>
-        </div>`).join('')}
+        </div>`;
+      }).join('')}
+      </div>
+      <div class="footer-note">Argumen yang baik tidak hanya terdengar meyakinkan, tetapi juga ditopang bukti dan alasan yang jelas.</div>`;
+  }
+
+  function renderEvidenceSplit(data) {
+    const renderGrid = (items, prefix) => items.map((e,i) => {
+      const isVid = e.img && e.img.endsWith('.mp4');
+      const mediaTag = isVid ? `<video class="bukti-card-img" src="${e.img}" muted loop></video>` : `<img class="bukti-card-img" src="${e.img}" alt="Bukti ${prefix} ${e.num}">`;
+      return `
+      <div class="bukti-card" data-bukti-idx="${i}" data-bukti-side="${prefix}">
+        ${mediaTag}
+        <div class="bukti-card-body">
+          <span class="bukti-card-num">BUKTI ${e.num}</span>
+          <div class="bukti-card-title">${e.title}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    return `<p class="section-subtitle" style="margin-bottom:18px">Pilih kategori bukti, lalu klik bukti untuk melihat detail.</p>
+      <div class="bukti-split-tabs">
+        <button class="bukti-split-tab active" data-bukti-tab="penggugat"><span class="bukti-tab-icon">🔴</span> Bukti Penggugat</button>
+        <button class="bukti-split-tab" data-bukti-tab="tergugat"><span class="bukti-tab-icon">🔵</span> Bukti Tergugat</button>
+      </div>
+      <div class="bukti-split-panel active" data-bukti-panel="penggugat">
+        <div class="bukti-split-header"><span class="bukti-split-badge penggugat">🔴</span><h3>Bukti Penggugat</h3><span class="bukti-split-count">${data.penggugat.length} Bukti</span></div>
+        <div class="bukti-grid">${renderGrid(data.penggugat,'penggugat')}</div>
+      </div>
+      <div class="bukti-split-panel" data-bukti-panel="tergugat">
+        <div class="bukti-split-header"><span class="bukti-split-badge tergugat">🔵</span><h3>Bukti Tergugat</h3><span class="bukti-split-count">${data.tergugat.length} Bukti</span></div>
+        <div class="bukti-grid">${renderGrid(data.tergugat,'tergugat')}</div>
       </div>
       <div class="footer-note">Argumen yang baik tidak hanya terdengar meyakinkan, tetapi juga ditopang bukti dan alasan yang jelas.</div>`;
   }
@@ -328,19 +504,48 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="footer-note">Pahami peranmu. Jalankan tugasmu. Hormati argumen pihak lain.</div>`;
   }
 
-  function openSubPage(subKey, kasus) {
+  function openSubPage(subKey, kasus, submenuIdx = null) {
     const data = getCaseContent(kasus, subKey);
     if (!data) return;
     const subPage = document.getElementById('sub-page');
-    const renderType = data.render || (data.cards === 'roles' ? 'roles-k1' : 'cards');
     let bodyHTML = '';
+    
+    // Set activeSubmenuIdx
+    activeSubmenuIdx = submenuIdx;
 
-    switch(renderType) {
-      case 'tabs': bodyHTML = renderTabs(data); break;
-      case 'evidence': bodyHTML = renderEvidence(data); break;
-      case 'roles': bodyHTML = renderRolesK2(data); break;
-      case 'roles-k1': bodyHTML = renderRolesK1(); break;
-      case 'cards': default: bodyHTML = renderCards(data); break;
+    if (data.render === 'submenu') {
+      if (submenuIdx === null) {
+        // Choice screen
+        bodyHTML = `
+          <div class="menu-grid">
+            ${data.submenus.map((sub, idx) => `
+              <div class="menu-card submenu-card" data-sub-idx="${idx}" data-sub-key="${subKey}" data-sub-kasus="${kasus}">
+                <div class="menu-card-fallback" style="font-size:3rem; display:flex; align-items:center; justify-content:center; border-bottom:2px solid var(--gold-dark); height:120px; position:relative; overflow:hidden;">${sub.icon}</div>
+                <div class="menu-card-body" style="padding:16px 12px 18px; text-align:center;">
+                  <span class="menu-label" style="font-size: 0.95rem; font-family:'MedievalSharp','Cinzel',serif; font-weight:700; color:var(--wood-dark); line-height:1.3; display:block;">${sub.label}</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } else {
+        const sub = data.submenus[submenuIdx];
+        const backBtn = `<div style="margin-bottom: 24px;">
+          <button class="btn-gold" id="submenu-back-btn" data-sub-key="${subKey}" data-sub-kasus="${kasus}" style="padding: 10px 22px; font-weight: 700; font-family: Cinzel, serif; font-size:0.9rem; border:2px solid var(--gold-dark); border-radius:var(--radius-sm); cursor:pointer;">◀ Kembali ke Pilihan</button>
+        </div>`;
+        const tabsHTML = renderTabs(sub);
+        bodyHTML = backBtn + tabsHTML;
+      }
+    } else {
+      const renderType = data.render || (data.cards === 'roles' ? 'roles-k1' : 'cards');
+      switch(renderType) {
+        case 'tabs': bodyHTML = renderTabs(data); break;
+        case 'evidence': bodyHTML = renderEvidence(data); break;
+        case 'evidence-split': bodyHTML = renderEvidenceSplit(data); break;
+        case 'roles': bodyHTML = renderRolesK2(data); break;
+        case 'roles-k1': bodyHTML = renderRolesK1(); break;
+        case 'cards': default: bodyHTML = renderCards(data); break;
+      }
     }
 
     const curIdx = subMenus.findIndex(m => m.key === subKey);
@@ -369,38 +574,79 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
       bindNavButtons();
+      
+      // Submenu cards interaction
+      document.querySelectorAll('.submenu-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const idx = parseInt(card.dataset.subIdx);
+          const key = card.dataset.subKey;
+          const k = parseInt(card.dataset.subKasus);
+          openSubPage(key, k, idx);
+        });
+      });
+
+      // Submenu back button
+      const backBtn = document.getElementById('submenu-back-btn');
+      if (backBtn) {
+        backBtn.addEventListener('click', () => {
+          const key = backBtn.dataset.subKey;
+          const k = parseInt(backBtn.dataset.subKasus);
+          openSubPage(key, k, null);
+          playSound('click');
+        });
+      }
+
       // Inner nav arrows
       let innerIdx = 0;
       const prevBtn = document.getElementById('inner-prev');
       const nextBtn = document.getElementById('inner-next');
       const titleEl = document.getElementById('inner-title');
       const counterEl = document.getElementById('inner-counter');
-      if (prevBtn && nextBtn && data.tabs) {
+      const currentTabsData = (data.render === 'submenu' && submenuIdx !== null) ? data.submenus[submenuIdx].tabs : data.tabs;
+      
+      if (prevBtn && nextBtn && currentTabsData) {
         function updateInnerNav() {
           document.querySelectorAll('.inner-panel').forEach(p => p.classList.remove('active'));
           const panel = document.querySelector(`.inner-panel[data-ipanel="${innerIdx}"]`);
           if (panel) panel.classList.add('active');
-          titleEl.textContent = (data.tabs[innerIdx].icon||'') + ' ' + data.tabs[innerIdx].label;
-          counterEl.textContent = (innerIdx+1) + ' / ' + data.tabs.length;
+          titleEl.textContent = (currentTabsData[innerIdx].icon||'') + ' ' + currentTabsData[innerIdx].label;
+          counterEl.textContent = (innerIdx+1) + ' / ' + currentTabsData.length;
           prevBtn.disabled = innerIdx === 0;
-          nextBtn.disabled = innerIdx === data.tabs.length - 1;
+          nextBtn.disabled = innerIdx === currentTabsData.length - 1;
         }
         prevBtn.addEventListener('click', () => { if (innerIdx > 0) { innerIdx--; updateInnerNav(); playSound('tab'); } });
-        nextBtn.addEventListener('click', () => { if (innerIdx < data.tabs.length-1) { innerIdx++; updateInnerNav(); playSound('tab'); } });
+        nextBtn.addEventListener('click', () => { if (innerIdx < currentTabsData.length-1) { innerIdx++; updateInnerNav(); playSound('tab'); } });
         updateInnerNav();
       }
+      
+      // Bukti split tabs
+      document.querySelectorAll('.bukti-split-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.bukti-split-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.bukti-split-panel').forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          document.querySelector(`.bukti-split-panel[data-bukti-panel="${tab.dataset.buktiTab}"]`).classList.add('active');
+          playSound('tab');
+        });
+      });
+
       // Bukti cards
       document.querySelectorAll('.bukti-card').forEach(card => {
         card.addEventListener('click', () => {
           const idx = parseInt(card.dataset.buktiIdx);
-          const e = data.evidence[idx];
+          const side = card.dataset.buktiSide;
+          const e = side ? data[side][idx] : data.evidence[idx];
           const modal = document.getElementById('role-modal');
+          const isVid = e.img && e.img.endsWith('.mp4');
+          const mediaTag = isVid 
+            ? `<video src="${e.img}" controls style="width:100%;height:auto;border-radius:10px;border:2px solid var(--gold-dark);margin-bottom:16px;object-fit:contain;background:#000"></video>`
+            : `<img src="${e.img}" alt="Bukti ${e.num}" style="width:100%;height:auto;border-radius:10px;border:2px solid var(--gold-dark);margin-bottom:16px;object-fit:contain">`;
           modal.querySelector('.modal-content').classList.add('modal-rich', 'modal-bukti');
           modal.querySelector('.modal-content').innerHTML = `
             <button class="modal-close">✕</button>
             <div class="bukti-detail">
               <h3>Bukti ${e.num}: ${e.title}</h3>
-              <img src="${e.img}" alt="Bukti ${e.num}" style="width:100%;height:auto;border-radius:10px;border:2px solid var(--gold-dark);margin-bottom:16px;object-fit:contain">
+              ${mediaTag}
               <p>${e.desc}</p>
               <div class="bukti-question"><strong>Pertanyaan Bukti:</strong><br>${e.question}</div>
             </div>`;
@@ -409,6 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
           playSound('modal');
         });
       });
+
       // Role cards (Kasus 2)
       document.querySelectorAll('.role-card[data-role-idx]').forEach(card => {
         card.addEventListener('click', () => {
@@ -436,6 +683,7 @@ document.addEventListener('DOMContentLoaded', () => {
           playSound('modal');
         });
       });
+
       // Sub-nav prev/next
       document.querySelectorAll('.sub-nav-btn').forEach(btn => {
         if (btn._bound) return;
@@ -445,6 +693,100 @@ document.addEventListener('DOMContentLoaded', () => {
           openSubPage(btn.dataset.subKey, parseInt(btn.dataset.subKasus));
         });
       });
+
+      // Quiz slideshow interaction
+      const quizContainer = document.getElementById('quiz-slideshow-container');
+      if (quizContainer) {
+        let quizData = null;
+        if (currentTabsData) {
+          const quizTab = currentTabsData.find(t => t.quiz);
+          if (quizTab) quizData = quizTab.quiz;
+        }
+
+        if (quizData) {
+          let currentQSlide = 0;
+          let answered = 0;
+          let correctCount = 0;
+          let wrongCount = 0;
+          const totalQ = quizData.length;
+
+          // Start Quiz Button
+          const startQuizBtn = document.getElementById('start-quiz-btn');
+          if (startQuizBtn) {
+            startQuizBtn.addEventListener('click', () => {
+              document.querySelector('[data-qslide="0"]').style.display = 'none';
+              document.querySelector('[data-qslide="1"]').style.display = 'block';
+              currentQSlide = 1;
+              playSound('click');
+            });
+          }
+
+          // Options click
+          document.querySelectorAll('.quiz-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+              const qi = parseInt(opt.dataset.qi);
+              const qEl = document.querySelector(`.quiz-question[data-qi="${qi}"]`);
+              if (qEl.classList.contains('quiz-answered')) return;
+              qEl.classList.add('quiz-answered');
+              answered++;
+              const selected = opt.dataset.val;
+              const correct = quizData[qi].answer;
+
+              qEl.querySelectorAll('.quiz-option').forEach(o => {
+                o.classList.add('quiz-disabled');
+                if (o.dataset.val === correct) o.classList.add('quiz-correct');
+                if (o.dataset.val === selected && selected !== correct) o.classList.add('quiz-wrong');
+              });
+
+              if (selected === correct) {
+                correctCount++;
+                playSound('correct');
+              } else {
+                wrongCount++;
+                playSound('wrong');
+              }
+
+              // Show the next button
+              const nextBtn = document.getElementById(`next-q-btn-${qi}`);
+              if (nextBtn) {
+                nextBtn.style.display = 'inline-block';
+              }
+            });
+          });
+
+          // Next slide buttons
+          document.querySelectorAll('.next-q-btn').forEach((btn, idx) => {
+            btn.addEventListener('click', () => {
+              // Hide current question slide
+              document.querySelector(`[data-qslide="${idx+1}"]`).style.display = 'none';
+              currentQSlide = idx + 2;
+
+              // Show next slide
+              const nextSlide = document.querySelector(`[data-qslide="${currentQSlide}"]`);
+              if (nextSlide) {
+                nextSlide.style.display = 'block';
+                playSound('click');
+              }
+
+              // If final results slide
+              if (idx + 1 === totalQ) {
+                document.getElementById('quiz-correct-count').textContent = correctCount;
+                document.getElementById('quiz-wrong-count').textContent = wrongCount;
+                document.getElementById('quiz-total-count').textContent = correctCount;
+                const pct = Math.round((correctCount / totalQ) * 100);
+                document.getElementById('quiz-score-fill').style.width = pct + '%';
+
+                let msg = '';
+                if (pct === 100) msg = '🌟 Luar biasa! Semua jawaban benar!';
+                else if (pct >= 75) msg = '👏 Bagus sekali! Pemahamanmu sudah baik.';
+                else if (pct >= 50) msg = '💪 Cukup baik. Coba pelajari lagi bagian yang salah.';
+                else msg = '📚 Terus belajar ya! Baca kembali materi kasusnya.';
+                document.getElementById('quiz-score-msg').textContent = msg;
+              }
+            });
+          });
+        }
+      }
     }, 50);
   }
 
