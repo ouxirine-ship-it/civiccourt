@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const AudioCtx = window.AudioContext || window.webkitAudioContext;
   let audioCtx;
   function ensureAudio() { if (!audioCtx) audioCtx = new AudioCtx(); }
+  
+  const audioCorrect = new Audio('assets/audio/tepuk_tangan.mp4');
+  const audioWrong = new Audio('assets/audio/tetot.mp4');
+
   function playSound(type) {
     ensureAudio();
     const osc = audioCtx.createOscillator();
@@ -20,14 +24,12 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'tab': osc.type='square'; osc.frequency.setValueAtTime(460,now); osc.frequency.exponentialRampToValueAtTime(700,now+.05); gain.gain.setValueAtTime(.35,now); gain.gain.exponentialRampToValueAtTime(.001,now+.1); osc.start(now); osc.stop(now+.1); break;
       case 'modal': osc.type='sine'; osc.frequency.setValueAtTime(320,now); osc.frequency.exponentialRampToValueAtTime(640,now+.12); gain.gain.setValueAtTime(.5,now); gain.gain.exponentialRampToValueAtTime(.001,now+.2); osc.start(now); osc.stop(now+.2); break;
       case 'correct': {
-        const audioCorrect = new Audio('assets/audio/tepuk_tangan.mp4');
-        audioCorrect.volume = 1.0;
+        audioCorrect.currentTime = 0;
         audioCorrect.play().catch(e => console.log(e));
         return;
       }
       case 'wrong': {
-        const audioWrong = new Audio('assets/audio/tetot.mp4');
-        audioWrong.volume = 1.0;
+        audioWrong.currentTime = 0;
         audioWrong.play().catch(e => console.log(e));
         return;
       }
@@ -321,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="quiz-score-display">
             <div class="quiz-score-correct">✅ Benar: <span id="quiz-correct-count">0</span></div>
             <div class="quiz-score-wrong">❌ Salah: <span id="quiz-wrong-count">0</span></div>
-            <div class="quiz-score-total">📊 Total: <span id="quiz-total-count">0</span> / ${quizArray.length}</div>
+            <div class="quiz-score-total">📊 Skor: <span id="quiz-total-count">0</span> / ${quizArray.length}</div>
           </div>
           <div class="quiz-score-bar"><div class="quiz-score-fill" id="quiz-score-fill"></div></div>
           <p class="quiz-score-msg" id="quiz-score-msg" style="color:#ffffff !important; font-weight:800; font-size:1.25rem; text-shadow:0 2px 5px rgba(0,0,0,0.8); margin-top:16px;"></p>
@@ -399,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="quiz-score-display" style="display:flex;justify-content:center;gap:18px;margin-bottom:18px;flex-wrap:wrap;">
               <div class="quiz-score-correct">✅ Benar: <span id="quiz-correct-count">0</span></div>
               <div class="quiz-score-wrong">❌ Salah: <span id="quiz-wrong-count">0</span></div>
-              <div class="quiz-score-total">📊 Total: <span id="quiz-total-count">0</span> / ${quizArray.length}</div>
+              <div class="quiz-score-total">📊 Skor: <span id="quiz-total-count">0</span> / ${quizArray.length}</div>
             </div>
             <div class="quiz-score-bar" style="width:100%;height:14px;background:rgba(255,255,255,.1);border-radius:7px;overflow:hidden;margin-bottom:16px;">
               <div class="quiz-score-fill" id="quiz-score-fill" style="height:100%;background:linear-gradient(90deg,#27ae60,#2ecc71,#f1c40f);border-radius:7px;width:0;transition:width 1s cubic-bezier(.34,1.56,.64,1);"></div>
