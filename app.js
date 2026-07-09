@@ -26,11 +26,15 @@ document.addEventListener('DOMContentLoaded', () => {
       case 'correct': {
         audioCorrect.currentTime = 0;
         audioCorrect.play().catch(e => console.log(e));
+        if (audioCorrect._timeout) clearTimeout(audioCorrect._timeout);
+        audioCorrect._timeout = setTimeout(() => { audioCorrect.pause(); }, 2500);
         return;
       }
       case 'wrong': {
         audioWrong.currentTime = 0;
         audioWrong.play().catch(e => console.log(e));
+        if (audioWrong._timeout) clearTimeout(audioWrong._timeout);
+        audioWrong._timeout = setTimeout(() => { audioWrong.pause(); }, 1500);
         return;
       }
     }
@@ -340,18 +344,18 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="content-card" style="border: 2px solid var(--gold-dark); border-radius: var(--radius-sm); background: linear-gradient(135deg, rgba(74,47,26,.8), rgba(42,26,14,.9)); margin-bottom: 0;">
           <h3 style="font-family:'MedievalSharp','Cinzel',serif;font-size:1.5rem;color:var(--gold-light);text-align:center;margin-bottom:10px;line-height:1.3;">🏆 ${intro.title}</h3>
           <p style="text-align:center;font-weight:700;color:var(--gold);margin-bottom:18px;font-size:1rem;line-height:1.3;">${intro.subtitle}</p>
-          <p style="line-height:1.6;font-size:0.95rem;margin-bottom:16px;color:var(--parchment-dark);text-align:justify;">${intro.desc}</p>
+          <p style="line-height:1.6;font-size:0.95rem;margin-bottom:16px;color:#fcf4d9;text-align:justify;">${intro.desc}</p>
           
           <div style="background:rgba(212,168,67,0.06);padding:14px;border-radius:8px;border:1px solid rgba(212,168,67,0.18);margin-bottom:16px;">
             <h4 style="color:var(--gold-light);margin-top:0;margin-bottom:8px;font-family:'MedievalSharp',serif;font-size:0.95rem;">📋 Petunjuk Kuis:</h4>
-            <ul style="margin:0;padding-left:18px;font-size:0.88rem;line-height:1.5;color:var(--parchment-dark);">
+            <ul style="margin:0;padding-left:18px;font-size:0.88rem;line-height:1.5;color:#fcf4d9;">
               ${intro.petunjuk.map(p => `<li>${p}</li>`).join('')}
             </ul>
           </div>
 
           <div style="background:rgba(255,255,255,0.03);padding:14px;border-radius:8px;border:1px solid rgba(255,255,255,0.07);margin-bottom:20px;">
             <h4 style="color:var(--gold-light);margin-top:0;margin-bottom:8px;font-family:'MedievalSharp',serif;font-size:0.95rem;">🛡️ Fokus Kuis:</h4>
-            <ul style="margin:0;padding-left:18px;font-size:0.88rem;line-height:1.5;color:var(--parchment-dark);list-style-type:decimal;">
+            <ul style="margin:0;padding-left:18px;font-size:0.88rem;line-height:1.5;color:#fcf4d9;list-style-type:decimal;">
               ${intro.fokus.map(f => `<li>${f}</li>`).join('')}
             </ul>
           </div>
@@ -359,7 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p style="font-style:italic;font-size:0.85rem;color:var(--gold-light);text-align:center;margin-bottom:20px;">${intro.note}</p>
           
           <div style="text-align:center;">
-            <button class="btn-gold" id="start-quiz-btn" style="padding:12px 28px;font-size:1.05rem;font-weight:800;font-family:Cinzel,serif;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Mulai Kuis 🚀</button>
+            <button class="btn-gold" id="start-quiz-btn" style="padding:16px 36px; border-radius: 30px; font-size:1.1rem;font-weight:800;font-family:Cinzel,serif;text-shadow:0 1px 2px rgba(0,0,0,0.5);">Mulai Kuis 🚀</button>
           </div>
         </div>
       </div>
@@ -413,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="content-card" style="margin-top:20px;border:2px solid var(--gold-dark);border-radius:var(--radius-sm);background: linear-gradient(135deg, rgba(74,47,26,.8), rgba(42,26,14,.9));">
           <h3 style="font-family:'MedievalSharp','Cinzel',serif;font-size:1.4rem;color:var(--gold-light);text-align:center;margin-bottom:10px;">🌟 ${outro.title}</h3>
           <p style="text-align:center;font-weight:700;color:var(--gold);margin-bottom:16px;font-size:0.95rem;">${outro.subtitle}</p>
-          <p style="line-height:1.7;font-size:0.92rem;margin-bottom:16px;text-align:justify;color:var(--parchment-dark);">${outro.desc}</p>
+          <p style="line-height:1.7;font-size:0.92rem;margin-bottom:16px;text-align:justify;color:#fcf4d9;">${outro.desc}</p>
           <div class="highlight-box" style="margin-top:14px;font-style:italic;text-align:center;font-size:0.9rem;">${outro.moral}</div>
         </div>
       </div>
